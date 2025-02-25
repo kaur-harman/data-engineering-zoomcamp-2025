@@ -15,16 +15,16 @@ This repository contains all assignments and learnings as I go through the Data 
 - Data Lakes and Workflow Orchestration
 - Workflow orchestration with Kestra
 
-
-### Workshop 1: Data Ingestion
-- API reading and pipeline scalability
-- Data normalization and incremental loading
-
-
 ### Module 3: Data Warehousing
 - Introduction to BigQuery
 - Partitioning, clustering, and best practices
 - Machine learning in BigQuery
+
+
+### Workshop 1: Data Ingestion
+- API reading and pipeline scalability
+- Data normalization and incremental loading
+  
 
 ### Module 4: Analytics Engineering
 - dbt (data build tool) with PostgreSQL & BigQuery
