@@ -129,19 +129,24 @@ That all being said, regarding macro above, **select all statements that are tru
 
 #### Answer :
 
-1. **Setting a value for `DBT_BIGQUERY_TARGET_DATASET` env var is mandatory, or it'll fail to compile**  
+1. Setting a value for `DBT_BIGQUERY_TARGET_DATASET` env var is mandatory, or it'll fail to compile 
+
    This variable is always accessed by the macro, either directly or as a fallback. If it is not set, the macro will fail to compile.  
 
-2. **Setting a value for `DBT_BIGQUERY_STAGING_DATASET` env var is mandatory, or it'll fail to compile**  
+2. Setting a value for `DBT_BIGQUERY_STAGING_DATASET` env var is mandatory, or it'll fail to compile 
+
    **False**: This variable is optional because the macro uses `DBT_BIGQUERY_TARGET_DATASET` as a fallback if it is not provided.  
 
-3. **When using `core`, it materializes in the dataset defined in `DBT_BIGQUERY_TARGET_DATASET`**  
+3. When using `core`, it materializes in the dataset defined in `DBT_BIGQUERY_TARGET_DATASET`
+
    If the `model_type` is `'core'`, the macro directly returns `DBT_BIGQUERY_TARGET_DATASET`.  
 
-4. **When using `stg`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`**  
+4. When using `stg`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
+
    For any model type other than `'core'`, the macro first checks `DBT_BIGQUERY_STAGING_DATASET`. If it is not set, it defaults to `DBT_BIGQUERY_TARGET_DATASET`.  
 
-5. **When using `staging`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`**  
+5. When using `staging`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
+ 
    The same logic applies here as for `'stg'`. The macro prioritizes `DBT_BIGQUERY_STAGING_DATASET` and falls back to `DBT_BIGQUERY_TARGET_DATASET` if the former is missing.
 
 
