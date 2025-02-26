@@ -58,8 +58,17 @@ What would you change to accomplish that in a such way that command line argumen
 - Add `ORDER BY pickup_datetime DESC` and `LIMIT {{ var("days_back", 30) }}`
 - Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", 30) }}' DAY`
 - Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ env_var("DAYS_BACK", "30") }}' DAY`
-- Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", env_var("DAYS_BACK", "30")) }}' DAY`
+- **Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", env_var("DAYS_BACK", "30")) }}' DAY`**
 - Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ env_var("DAYS_BACK", var("days_back", "30")) }}' DAY`
+
+#### Answer :
+Update the WHERE clause to 
+`
+pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", env_var("DAYS_BACK", "30")) }}'
+`DAY
+
+The var() function first checks for values passed via command-line arguments, which have the highest priority. If no command-line argument is provided, it falls back to the environment variable using env_var().If neither is available, it defaults to 30 days
+
 
 
 ### Question 3: dbt Data Lineage and Execution
@@ -74,7 +83,11 @@ Select the option that does **NOT** apply for materializing `fct_taxi_monthly_zo
 - `dbt run --select +models/core/dim_taxi_trips.sql+ --target prod`
 - `dbt run --select +models/core/fct_taxi_monthly_zone_revenue.sql`
 - `dbt run --select +models/core/`
-- `dbt run --select models/staging/+`
+- **`dbt run --select models/staging/+`**
+
+#### Answer :
+`dbt run --select models/staging/+` This will only run for the staging directory and not the core.
+
 
 
 ### Question 4: dbt Macros and Jinja
@@ -108,11 +121,31 @@ And use on your staging, dim_ and fact_ models as:
 ```
 
 That all being said, regarding macro above, **select all statements that are true to the models using it**:
-- Setting a value for  `DBT_BIGQUERY_TARGET_DATASET` env var is mandatory, or it'll fail to compile
+- **Setting a value for  `DBT_BIGQUERY_TARGET_DATASET` env var is mandatory, or it'll fail to compile**
 - Setting a value for `DBT_BIGQUERY_STAGING_DATASET` env var is mandatory, or it'll fail to compile
-- When using `core`, it materializes in the dataset defined in `DBT_BIGQUERY_TARGET_DATASET`
-- When using `stg`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
-- When using `staging`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
+- **When using `core`, it materializes in the dataset defined in `DBT_BIGQUERY_TARGET_DATASET`**
+- **When using `stg`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`**
+- **When using `staging`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`**
+
+#### Answer :
+
+1. **Setting a value for `DBT_BIGQUERY_TARGET_DATASET` env var is mandatory, or it'll fail to compile**  
+   This variable is always accessed by the macro, either directly or as a fallback. If it is not set, the macro will fail to compile.  
+
+2. **Setting a value for `DBT_BIGQUERY_STAGING_DATASET` env var is mandatory, or it'll fail to compile**  
+   **False**: This variable is optional because the macro uses `DBT_BIGQUERY_TARGET_DATASET` as a fallback if it is not provided.  
+
+3. **When using `core`, it materializes in the dataset defined in `DBT_BIGQUERY_TARGET_DATASET`**  
+   If the `model_type` is `'core'`, the macro directly returns `DBT_BIGQUERY_TARGET_DATASET`.  
+
+4. **When using `stg`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`**  
+   For any model type other than `'core'`, the macro first checks `DBT_BIGQUERY_STAGING_DATASET`. If it is not set, it defaults to `DBT_BIGQUERY_TARGET_DATASET`.  
+
+5. **When using `staging`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`**  
+   The same logic applies here as for `'stg'`. The macro prioritizes `DBT_BIGQUERY_STAGING_DATASET` and falls back to `DBT_BIGQUERY_TARGET_DATASET` if the former is missing.
+
+
+
 
 
 ## Serious SQL
